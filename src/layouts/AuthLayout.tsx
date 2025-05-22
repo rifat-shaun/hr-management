@@ -1,5 +1,6 @@
 import { Box, Container, Paper, Typography } from '@mui/material';
 import type { ReactNode } from 'react';
+import { ThemeToggle } from '../components/ThemeToggle';
 
 interface AuthLayoutProps {
   children: ReactNode;
@@ -17,6 +18,11 @@ export const AuthLayout = ({ children, title, subtitle }: AuthLayoutProps) => {
         backgroundColor: (theme) => theme.palette.grey[100],
       }}
     >
+      {/* Theme Toggle */}
+      <Box sx={{ position: 'absolute', top: 16, right: 16 }}>
+        <ThemeToggle />
+      </Box>
+
       <Container component="main" maxWidth="sm" sx={{ mb: 4 }}>
         <Box
           sx={{
