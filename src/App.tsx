@@ -1,11 +1,14 @@
-import { ThemeProvider, CssBaseline, Container } from '@mui/material';
+
+import { ThemeProvider, CssBaseline } from '@mui/material';
 import { QueryClientProvider } from '@tanstack/react-query';
 import { Provider } from 'react-redux';
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, RouterProvider, createBrowserRouter } from 'react-router-dom';
 
 import theme from './styles/theme';
 import queryClient from './store/queryClient';
 import store from './store';
+import { publicRoutes } from './routes/routeConfig';
+import { protectedRoutes } from './routes/routeConfig';
 
 function App() {
   return (
@@ -13,13 +16,8 @@ function App() {
       <QueryClientProvider client={queryClient}>
         <ThemeProvider theme={theme}>
           <CssBaseline />
-          <Router>
-            <Container>
-              <Routes>
-                <Route path="/" element={<h1>Welcome to HR App</h1>} />
-              </Routes>
-            </Container>
-          </Router>
+          <CssBaseline />
+          <RouterProvider router={createBrowserRouter([...publicRoutes, ...protectedRoutes])} />
         </ThemeProvider>
       </QueryClientProvider>
     </Provider>
