@@ -6,7 +6,6 @@ import {
   Link,
   FormControlLabel,
   Checkbox,
-  Grid,
 } from '@mui/material';
 import { AuthLayout } from '../../layouts/AuthLayout';
 
@@ -80,12 +79,9 @@ export const Login = () => {
         >
           Sign In
         </Button>
-        <Box sx={{ display: 'flex', justifyContent: 'space-between', mt: 2 }}>
-          <Link href="#" variant="body2">
+        <Box sx={{ display: 'flex', justifyContent: 'flex-end', mt: 2 }}>
+          <Link href="/forgot-password" variant="body2">
             Forgot password?
-          </Link>
-          <Link href="/register" variant="body2">
-            {"Don't have an account? Sign Up"}
           </Link>
         </Box>
       </Box>

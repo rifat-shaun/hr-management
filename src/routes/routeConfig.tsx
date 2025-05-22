@@ -1,5 +1,6 @@
 import { lazy, Suspense } from 'react';
 import { Login } from '../pages/auth/Login';
+import { ForgotPassword } from '../pages/auth/ForgotPassword';
 import { ProtectedRoute } from './ProtectedRoute';
 import type { RouteObject } from 'react-router-dom';
 import type { ReactNode } from 'react';
@@ -14,8 +15,8 @@ export const publicRoutes: RouteObject[] = [
     element: <Login />,
   },
   {
-    path: '/register',
-    element: <Login />,
+    path: '/forgot-password',
+    element: <ForgotPassword />,
   },
 ];
 
