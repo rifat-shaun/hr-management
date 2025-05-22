@@ -11,6 +11,7 @@ import {
 import { AuthLayout } from '../../layouts/AuthLayout';
 import { useNavigate } from 'react-router-dom';
 import RefreshIcon from '@mui/icons-material/Refresh';
+import { useAuth } from '../../contexts/AuthContext';
 
 // Dummy API functions
 const dummyVerify2FA = async (code: string): Promise<boolean> => {
@@ -30,6 +31,7 @@ export const TwoFactorAuth = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [countdown, setCountdown] = useState(30);
   const navigate = useNavigate();
+  const { login } = useAuth();
 
   useEffect(() => {
     const timer = countdown > 0 && setInterval(() => setCountdown(c => c - 1), 1000);
@@ -46,9 +48,8 @@ export const TwoFactorAuth = () => {
     try {
       const isValid = await dummyVerify2FA(code);
       if (isValid) {
-        // In a real app, you would handle the successful verification here
-        // For now, just redirect to dashboard
-        navigate('/');
+        login(); // Set authenticated state
+        navigate('/'); // Navigate to dashboard
       } else {
         setError('Invalid verification code. Please try again.');
       }

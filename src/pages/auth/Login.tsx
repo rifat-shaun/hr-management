@@ -10,6 +10,7 @@ import {
 } from '@mui/material';
 import { AuthLayout } from '../../layouts/AuthLayout';
 import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../../contexts/AuthContext';
 
 // Dummy API function
 const dummyLogin = async (email: string, password: string): Promise<{ requires2FA: boolean }> => {
@@ -28,6 +29,7 @@ export const Login = () => {
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
+  const { login } = useAuth();
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -42,6 +44,7 @@ export const Login = () => {
         navigate('/2fa');
       } else {
         // Direct login if 2FA not required
+        login();
         navigate('/');
       }
     } catch (err) {
