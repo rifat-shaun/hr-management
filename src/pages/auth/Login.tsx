@@ -6,8 +6,18 @@ import {
   Link,
   FormControlLabel,
   Checkbox,
+  Alert,
 } from '@mui/material';
 import { AuthLayout } from '../../layouts/AuthLayout';
+import { useNavigate } from 'react-router-dom';
+
+// Dummy API function
+const dummyLogin = async (email: string, password: string): Promise<{ requires2FA: boolean }> => {
+  // Simulate API call
+  await new Promise(resolve => setTimeout(resolve, 1000));
+  // For demo purposes, trigger 2FA for specific email
+  return { requires2FA: email === 'test@example.com' };
+};
 
 export const Login = () => {
   const [formData, setFormData] = useState({
@@ -15,11 +25,30 @@ export const Login = () => {
     password: '',
     rememberMe: false,
   });
+  const [error, setError] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
+  const navigate = useNavigate();
 
-  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    // TODO: Implement login logic
-    console.log('Login attempt with:', formData);
+    setError('');
+    setIsLoading(true);
+
+    try {
+      const { requires2FA } = await dummyLogin(formData.email, formData.password);
+      
+      if (requires2FA) {
+        // Redirect to 2FA page if required
+        navigate('/2fa');
+      } else {
+        // Direct login if 2FA not required
+        navigate('/');
+      }
+    } catch (err) {
+      setError('Invalid email or password');
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -36,6 +65,11 @@ export const Login = () => {
       subtitle="Welcome back! Please enter your credentials to continue."
     >
       <Box component="form" onSubmit={handleSubmit} sx={{ width: '100%' }}>
+        {error && (
+          <Alert severity="error" sx={{ mb: 2 }}>
+            {error}
+          </Alert>
+        )}
         <TextField
           margin="normal"
           required
@@ -76,8 +110,9 @@ export const Login = () => {
           fullWidth
           variant="contained"
           sx={{ mt: 3, mb: 2 }}
+          disabled={isLoading}
         >
-          Sign In
+          {isLoading ? 'Signing in...' : 'Sign In'}
         </Button>
         <Box sx={{ display: 'flex', justifyContent: 'flex-end', mt: 2 }}>
           <Link href="/forgot-password" variant="body2">
