@@ -3,17 +3,18 @@ import type { ReactNode } from 'react';
 
 interface ProtectedRouteProps {
   children: ReactNode;
-  isAuthenticated?: boolean;
+  isAuthenticated: boolean;
 }
 
 export const ProtectedRoute = ({
   children,
-  isAuthenticated = false,
+  isAuthenticated,
 }: ProtectedRouteProps) => {
   const location = useLocation();
 
   if (!isAuthenticated) {
-    return <Navigate to="/login" state={{ from: location }} replace />;
+    // Redirect to login while preserving the attempted URL
+    return <Navigate to="/login" state={{ from: location.pathname }} replace />;
   }
 
   return <>{children}</>;

@@ -9,7 +9,7 @@ import {
   IconButton,
 } from '@mui/material';
 import { AuthLayout } from '../../layouts/AuthLayout';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import RefreshIcon from '@mui/icons-material/Refresh';
 import { useAuth } from '../../contexts/AuthContext';
 
@@ -31,6 +31,7 @@ export const TwoFactorAuth = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [countdown, setCountdown] = useState(30);
   const navigate = useNavigate();
+  const location = useLocation();
   const { login } = useAuth();
 
   useEffect(() => {
@@ -48,8 +49,10 @@ export const TwoFactorAuth = () => {
     try {
       const isValid = await dummyVerify2FA(code);
       if (isValid) {
-        login(); // Set authenticated state
-        navigate('/'); // Navigate to dashboard
+        login();
+        // Navigate to the dashboard or the originally requested URL
+        const intendedPath = location.state?.from || '/';
+        navigate(intendedPath, { replace: true });
       } else {
         setError('Invalid verification code. Please try again.');
       }
