@@ -15,7 +15,7 @@ export const AuthLayout = ({ children, title, subtitle }: AuthLayoutProps) => {
         minHeight: '100vh',
         display: 'flex',
         flexDirection: 'column',
-        backgroundColor: (theme) => theme.palette.grey[100],
+        backgroundColor: (theme) => theme.palette.background.default,
       }}
     >
       {/* Theme Toggle */}
@@ -52,6 +52,7 @@ export const AuthLayout = ({ children, title, subtitle }: AuthLayoutProps) => {
               display: 'flex',
               flexDirection: 'column',
               alignItems: 'center',
+              backgroundColor: (theme) => theme.palette.background.paper,
             }}
           >
             {title && (
