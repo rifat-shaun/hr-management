@@ -1,116 +1,200 @@
 import React, { useState } from 'react';
-import { Link, Outlet, useLocation } from 'react-router-dom';
-import { 
-  HomeIcon, 
-  UsersIcon, 
-  BriefcaseIcon,
-  CalendarIcon,
-  Cog6ToothIcon,
-  Bars3Icon,
-  XMarkIcon,
-  ClockIcon,
-  UserIcon,
-  DocumentTextIcon
-} from '@heroicons/react/24/outline';
+import styled from '@emotion/styled';
+import { Outlet, NavLink } from 'react-router-dom';
+import MenuIcon from '@mui/icons-material/Menu';
+import CloseIcon from '@mui/icons-material/Close';
+import NotificationsIcon from '@mui/icons-material/Notifications';
+import AccountCircleIcon from '@mui/icons-material/AccountCircle';
+import HomeIcon from '@mui/icons-material/Home';
+import PeopleIcon from '@mui/icons-material/People';
+import EventIcon from '@mui/icons-material/Event';
+import SettingsIcon from '@mui/icons-material/Settings';
+import { useTheme } from '../contexts/ThemeContext';
+import { ThemeToggle } from '../components/ThemeToggle';
+import { useTheme as useMuiTheme } from '@mui/material/styles';
 
-interface NavItem {
-  name: string;
-  path: string;
-  icon: React.ElementType;
-  roles: string[];
+// Styled Components
+const LayoutContainer = styled.div<{ isDarkMode: boolean }>`
+  display: flex;
+  min-height: 100vh;
+  background-color: ${props => props.isDarkMode ? '#121212' : '#F9FAFB'};
+`;
+
+interface SidebarProps {
+  isOpen: boolean;
+  isDarkMode?: boolean;
 }
 
-const navigation: NavItem[] = [
-  { name: 'Dashboard', path: '/dashboard', icon: HomeIcon, roles: ['admin', 'employee'] },
-  { name: 'My Profile', path: '/profile', icon: UserIcon, roles: ['admin', 'employee'] },
-  { name: 'My Attendance', path: '/attendance', icon: ClockIcon, roles: ['admin', 'employee'] },
-  { name: 'My Leave', path: '/my-leave', icon: CalendarIcon, roles: ['admin', 'employee'] },
-  { name: 'My Documents', path: '/documents', icon: DocumentTextIcon, roles: ['admin', 'employee'] },
-  { name: 'Employees', path: '/employees', icon: UsersIcon, roles: ['admin'] },
-  { name: 'Jobs', path: '/jobs', icon: BriefcaseIcon, roles: ['admin'] },
-  { name: 'Leave Management', path: '/leave', icon: CalendarIcon, roles: ['admin'] },
-  { name: 'Settings', path: '/settings', icon: Cog6ToothIcon, roles: ['admin'] },
+const Sidebar = styled.aside<SidebarProps>`
+  width: ${props => props.isOpen ? '280px' : '90px'};
+  background-color: ${props => props.isDarkMode ? '#1E1E1E' : '#1F2937'};
+  color: #FFFFFF;
+  transition: all 0.3s ease;
+  padding: 1rem;
+`;
+
+const SidebarHeader = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  margin-bottom: 1rem;
+`;
+
+const Logo = styled.div<SidebarProps>`
+  font-size: 1.5rem;
+  font-weight: bold;
+  display: ${props => props.isOpen ? 'block' : 'none'};
+  color: #FFFFFF;
+`;
+
+const MainContent = styled.main<{ isDarkMode: boolean }>`
+  flex: 1;
+  background-color: ${props => props.isDarkMode ? '#121212' : '#F9FAFB'};
+  color: ${props => props.isDarkMode ? '#FFFFFF' : '#1F2937'};
+`;
+
+const Header = styled.header<{ isDarkMode: boolean }>`
+  background-color: ${props => props.isDarkMode ? '#1E1E1E' : '#FFFFFF'};
+  height: 64px;
+  color: ${props => props.isDarkMode ? '#FFFFFF' : '#1F2937'};
+  padding: 4px 16px;
+  box-shadow: 0 2px 4px ${props => props.isDarkMode ? 'rgba(0, 0, 0, 0.3)' : 'rgba(0, 0, 0, 0.1)'};
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+`;
+
+const StyledNavLink = styled(NavLink)<SidebarProps>`
+  text-decoration: none;
+  color: #FFFFFF;
+  width: 100%;
+
+  &.active {
+    background-color: rgba(255, 255, 255, 0.1);
+    border-radius: 0.5rem;
+    color: #D8284B;
+
+    svg {
+      color: #D8284B;
+    }
+  }
+`;
+
+const NavItem = styled.div<SidebarProps>`
+  display: flex;
+  align-items: center;
+  padding: 0.75rem 1rem;
+  margin: 0.5rem 0;
+  border-radius: 0.5rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+
+  &:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+  }
+
+  svg {
+    margin-right: ${props => props.isOpen ? '1rem' : '0'};
+    color: #FFFFFF;
+    transition: color 0.2s ease;
+  }
+
+  span {
+    display: ${props => props.isOpen ? 'block' : 'none'};
+  }
+`;
+
+const UserActions = styled.div<{ isDarkMode: boolean }>`
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+
+  svg {
+    cursor: pointer;
+    font-size: 1.25rem;
+    color: ${props => props.isDarkMode ? '#A0A0A0' : '#6B7280'};
+    
+    &:hover {
+      color: ${props => props.isDarkMode ? '#FFFFFF' : '#1F2937'};
+    }
+  }
+`;
+
+const ContentWrapper = styled.div`
+  padding: 2rem;
+`;
+
+interface NavItemType {
+  icon: React.ReactNode;
+  label: string;
+  path: string;
+}
+
+const navItems: NavItemType[] = [
+  { icon: <HomeIcon />, label: 'Dashboard', path: '/dashboard' },
+  { icon: <PeopleIcon />, label: 'Employees', path: '/employees' },
+  { icon: <EventIcon />, label: 'Leave Management', path: '/leave' },
+  { icon: <SettingsIcon />, label: 'Settings', path: '/settings' },
 ];
 
 const DashboardLayout: React.FC = () => {
-  const [sidebarOpen, setSidebarOpen] = useState(false);
-  // TODO: Replace this with actual user role from your authentication system
-  const userRole = 'employee'; // This should come from your auth context/state
-  const location = useLocation();
+  const [isSidebarOpen, setIsSidebarOpen] = useState(true);
+  const { isDarkMode } = useTheme();
+  const muiTheme = useMuiTheme();
 
-  const filteredNavigation = navigation.filter(item => item.roles.includes(userRole));
-
-  const renderNavigation = (
-    <nav className="flex-1 space-y-1 px-2 py-4">
-      {filteredNavigation.map((item) => {
-        const isActive = location.pathname === item.path;
-        return (
-          <Link
-            key={item.name}
-            to={item.path}
-            className={`group flex items-center rounded-md px-2 py-2 text-base font-medium ${
-              isActive 
-                ? 'bg-gray-100 text-gray-900' 
-                : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
-            }`}
-          >
-            <item.icon className={`mr-4 h-6 w-6 ${
-              isActive ? 'text-gray-900' : 'text-gray-500'
-            }`} />
-            {item.name}
-          </Link>
-        );
-      })}
-    </nav>
-  );
+  const toggleSidebar = () => {
+    setIsSidebarOpen(!isSidebarOpen);
+  };
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      {/* Mobile sidebar */}
-      <div className={`fixed inset-0 z-40 lg:hidden ${sidebarOpen ? 'block' : 'hidden'}`}>
-        <div className="fixed inset-0 bg-gray-600 bg-opacity-75" onClick={() => setSidebarOpen(false)} />
-        <div className="fixed inset-y-0 left-0 flex w-64 flex-col bg-white">
-          <div className="flex h-16 items-center justify-between px-4">
-            <h1 className="text-2xl font-bold text-gray-900">HR Manager</h1>
-            <button onClick={() => setSidebarOpen(false)}>
-              <XMarkIcon className="h-6 w-6 text-gray-500" />
-            </button>
-          </div>
-          {renderNavigation}
-        </div>
-      </div>
-
-      {/* Desktop sidebar */}
-      <div className="hidden lg:fixed lg:inset-y-0 lg:flex lg:w-64 lg:flex-col">
-        <div className="flex min-h-0 flex-1 flex-col border-r border-gray-200 bg-white">
-          <div className="flex h-16 items-center px-4">
-            <h1 className="text-2xl font-bold text-gray-900">HR Manager</h1>
-          </div>
-          {renderNavigation}
-        </div>
-      </div>
-
-      {/* Main content */}
-      <div className="flex flex-1 flex-col lg:pl-64">
-        <div className="sticky top-0 z-10 bg-white pl-1 pt-1 sm:pl-3 sm:pt-3 lg:hidden">
-          <button
-            type="button"
-            className="-ml-0.5 -mt-0.5 inline-flex h-12 w-12 items-center justify-center rounded-md text-gray-500 hover:text-gray-900 focus:outline-none"
-            onClick={() => setSidebarOpen(true)}
+    <LayoutContainer isDarkMode={isDarkMode}>
+      <Sidebar 
+        isOpen={isSidebarOpen} 
+        style={{ 
+          backgroundColor: muiTheme.palette.background.sidebar 
+        }}
+      >
+        <SidebarHeader>
+          <Logo isOpen={isSidebarOpen}>HR Manager</Logo>
+          {isSidebarOpen ? (
+            <CloseIcon onClick={toggleSidebar} sx={{ cursor: 'pointer' }} />
+          ) : (
+            <MenuIcon onClick={toggleSidebar} sx={{ cursor: 'pointer' }} />
+          )}
+        </SidebarHeader>
+        
+        {navItems.map((item, index) => (
+          <StyledNavLink 
+            key={index} 
+            to={item.path}
+            isOpen={isSidebarOpen}
           >
-            <span className="sr-only">Open sidebar</span>
-            <Bars3Icon className="h-6 w-6" />
-          </button>
-        </div>
-        <main className="flex-1">
-          <div className="py-6">
-            <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-              <Outlet />
-            </div>
+            <NavItem isOpen={isSidebarOpen}>
+              {item.icon}
+              <span>{item.label}</span>
+            </NavItem>
+          </StyledNavLink>
+        ))}
+      </Sidebar>
+
+      <MainContent isDarkMode={isDarkMode}>
+        <Header isDarkMode={isDarkMode}>
+          <div>
+            <h2 style={{margin: 0}}>Welcome back, Admin</h2>
           </div>
-        </main>
-      </div>
-    </div>
+          <UserActions isDarkMode={isDarkMode}>
+            <ThemeToggle />
+            <NotificationsIcon />
+            <AccountCircleIcon />
+          </UserActions>
+        </Header>
+        <ContentWrapper>
+          <Outlet />
+        </ContentWrapper>
+      </MainContent>
+    </LayoutContainer>
   );
 };
 

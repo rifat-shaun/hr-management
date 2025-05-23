@@ -1,6 +1,13 @@
 import { createTheme } from '@mui/material/styles';
 import type { PaletteMode } from '@mui/material/styles';
 
+// Extend the Theme type to include our custom properties
+declare module '@mui/material/styles' {
+  interface TypeBackground {
+    sidebar?: string;
+  }
+}
+
 const getTheme = (mode: PaletteMode) => createTheme({
   palette: {
     mode,
@@ -14,6 +21,7 @@ const getTheme = (mode: PaletteMode) => createTheme({
     background: {
       default: mode === 'light' ? '#F9FAFB' : '#121212',
       paper: mode === 'light' ? '#FFFFFF' : '#1E1E1E',
+      sidebar: mode === 'light' ? '#1F2937' : '#1E1E1E',
     },
     text: {
       primary: mode === 'light' ? '#1F2937' : '#FFFFFF',
