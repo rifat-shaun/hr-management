@@ -4,19 +4,19 @@ import type { B, R } from "../model";
 export class AuthServices {
 
   //**************************************************** GET *****************************************************/
-  getUser=                  () =>                       client.get("/user");
+  getUser=                  () =>                       client.get("/auth/user");
 
   //**************************************************** POST *****************************************************/
-  login=                    (data: B): R =>                client.post("/login", data);
-  register=                 (data: B) =>                client.post("/register", data);
-  logout=                   () =>                       client.post("/logout");
+  login=                    (data: B): R =>             client.post("/auth/login", data);
+  register=                 (data: B) =>                client.post("/auth/register", data);
+  logout=                   () =>                       client.post("/auth/logout");
 
   //**************************************************** PUT *****************************************************/
-  updateUser=               (data: B) =>                client.put("/user", data);
+  updateUser=               (data: B) =>                client.put("/auth/user", data);
 
   //**************************************************** PATCH ***************************************************/
 
   //**************************************************** DELETE ***************************************************/
-  deleteUser=               () =>                       client.delete("/user");
+  deleteUser=               () =>                       client.delete("/auth/user");
 };
 

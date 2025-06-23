@@ -44,11 +44,7 @@ export class HttpClient implements IHttpClient {
       return url;
     }
 
-    if (this.baseUrl) {
-      return 'api/' + v + url;
-    }
-
-    return '';
+    return `/api/${v}${url}`;
   }
 
   public injectAuthHeaders(accessToken: string): void {
