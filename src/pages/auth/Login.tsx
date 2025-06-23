@@ -11,14 +11,7 @@ import {
 import { AuthLayout } from '../../layouts/AuthLayout';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
-
-// Dummy API function
-const dummyLogin = async (email: string, password: string): Promise<{ requires2FA: boolean }> => {
-  // Simulate API call
-  await new Promise(resolve => setTimeout(resolve, 1000));
-  // For demo purposes, trigger 2FA for specific email
-  return { requires2FA: email === 'test@example.com' };
-};
+import { authServices } from '@/services';
 
 export const Login = () => {
   const [formData, setFormData] = useState({
@@ -37,18 +30,21 @@ export const Login = () => {
     setIsLoading(true);
 
     try {
-      const { requires2FA } = await dummyLogin(formData.email, formData.password);
-      
-      if (requires2FA) {
-        // Redirect to 2FA page if required
-        navigate('/2fa');
+      const response = await authServices.login(formData);
+      if (response.success) {
+        if (response.data.requires2FA) {
+          // Redirect to 2FA page if required
+          navigate('/2fa');
+        } else {
+          // Direct login if 2FA not required
+          login(response.data.token);
+          navigate('/');
+        }
       } else {
-        // Direct login if 2FA not required
-        login();
-        navigate('/');
+        setError(response.message || 'An error occurred');
       }
     } catch (err) {
-      setError('Invalid email or password');
+      setError(err instanceof Error ? err.message : 'An error occurred');
     } finally {
       setIsLoading(false);
     }

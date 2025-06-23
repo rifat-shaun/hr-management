@@ -1,1 +1,4 @@
-node_modules\nbuild\ndist
+src/service/modules/
+src/service/modules/**/*
+node_modules
+package-lock.json
