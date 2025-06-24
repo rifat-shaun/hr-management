@@ -7,8 +7,8 @@ export class AuthServices {
   getUser=                  () =>                       client.get("/auth/user");
 
   //**************************************************** POST *****************************************************/
-  login=                    (data: B): R =>             client.post("/auth/login", data);
-  register=                 (data: B) =>                client.post("/auth/register", data);
+  login=                    (data: B): R =>             client.post("/auth/login", data, undefined, { ignoreAuth: true });
+  register=                 (data: B) =>                client.post("/auth/register", data, undefined, { ignoreAuth: true });
   logout=                   () =>                       client.post("/auth/logout");
 
   //**************************************************** PUT *****************************************************/

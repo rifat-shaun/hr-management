@@ -6,12 +6,13 @@ import {
   Link,
   FormControlLabel,
   Checkbox,
-  Alert,
 } from '@mui/material';
 import { AuthLayout } from '../../layouts/AuthLayout';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
 import { authServices } from '@/services';
+import { HTTPError } from '@/services/model';
+import { toast } from 'react-toastify';
 
 export const Login = () => {
   const [formData, setFormData] = useState({
@@ -19,14 +20,12 @@ export const Login = () => {
     password: '',
     rememberMe: false,
   });
-  const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
   const { login } = useAuth();
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    setError('');
     setIsLoading(true);
 
     try {
@@ -38,13 +37,22 @@ export const Login = () => {
         } else {
           // Direct login if 2FA not required
           login(response.data.token);
+          toast.success('Successfully logged in!');
           navigate('/');
         }
       } else {
-        setError(response.message || 'An error occurred');
+        // Handle API response with success: false
+        toast.error(response.message || 'Login failed. Please check your credentials.');
       }
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'An error occurred');
+      // Handle HTTP errors (network errors, 4xx, 5xx status codes)
+      if (err instanceof HTTPError) {
+        toast.error(err.message || 'Login failed. Please check your credentials.');
+      } else if (err instanceof Error) {
+        toast.error(err.message || 'An unexpected error occurred. Please try again.');
+      } else {
+        toast.error('An unexpected error occurred. Please try again.');
+      }
     } finally {
       setIsLoading(false);
     }
@@ -64,11 +72,6 @@ export const Login = () => {
       subtitle="Welcome back! Please enter your credentials to continue."
     >
       <Box component="form" onSubmit={handleSubmit} sx={{ width: '100%' }}>
-        {error && (
-          <Alert severity="error" sx={{ mb: 2 }}>
-            {error}
-          </Alert>
-        )}
         <TextField
           margin="normal"
           required

@@ -28,7 +28,7 @@ export class HttpClient implements IHttpClient {
         'X-Origin': window.location.origin,
       },
 
-      validateStatus: (status: number) => status >= 200 && status < 300,
+      validateStatus: (status: number) => status >= 200 && status < 500,
       withCredentials: false,
     });
   }
@@ -97,7 +97,17 @@ export class HttpClient implements IHttpClient {
     }
     return this.client
       .post<R>(this.buildUrl(url, apiOptions?.v, apiOptions?.onlyBaseUrl), data, requestConfig as any)
-      .then((response) => response.data)
+      .then((response) => {
+        if (response.status >= 400 && response.status < 500) {
+          const responseData = response.data as any;
+          throw new HTTPError(
+            response.status,
+            responseData?.message || responseData?.error || 'Request failed',
+            responseData
+          );
+        }
+        return response.data;
+      })
       .catch(this.onRequestFailure);
   }
 
