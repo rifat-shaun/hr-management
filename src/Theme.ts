@@ -1,22 +1,31 @@
 import { createTheme } from '@mui/material/styles';
+import type { PaletteMode } from '@mui/material/styles';
 
-const theme = createTheme({
+// Extend the Theme type to include our custom properties
+declare module '@mui/material/styles' {
+  interface TypeBackground {
+    sidebar?: string;
+  }
+}
+
+const getTheme = (mode: PaletteMode) => createTheme({
   palette: {
-    mode: 'light',
+    mode,
     primary: {
       main: '#D8284B',
       contrastText: '#FFFFFF',
     },
     secondary: {
-      main: '#424242', // dark gray
+      main: mode === 'light' ? '#424242' : '#A0A0A0',
     },
     background: {
-      default: '#F9FAFB', // light background
-      paper: '#FFFFFF',
+      default: mode === 'light' ? '#F9FAFB' : '#121212',
+      paper: mode === 'light' ? '#FFFFFF' : '#1E1E1E',
+      sidebar: mode === 'light' ? '#1F2937' : '#1E1E1E',
     },
     text: {
-      primary: '#1F2937', // dark slate gray
-      secondary: '#6B7280', // muted gray
+      primary: mode === 'light' ? '#1F2937' : '#FFFFFF',
+      secondary: mode === 'light' ? '#6B7280' : '#A0A0A0',
     },
     error: {
       main: '#EF4444',
@@ -45,6 +54,16 @@ const theme = createTheme({
   shape: {
     borderRadius: 8,
   },
+  components: {
+    MuiAppBar: {
+      styleOverrides: {
+        root: {
+          backgroundColor: mode === 'light' ? '#FFFFFF' : '#1E1E1E',
+          color: mode === 'light' ? '#1F2937' : '#FFFFFF',
+        },
+      },
+    },
+  },
 });
 
-export default theme;
+export default getTheme;

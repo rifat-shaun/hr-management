@@ -6,9 +6,12 @@ import {
   Link,
   FormControlLabel,
   Checkbox,
-  Grid,
+  Alert,
 } from '@mui/material';
 import { AuthLayout } from '../../layouts/AuthLayout';
+import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../../contexts/AuthContext';
+import { authServices } from '@/services';
 
 export const Login = () => {
   const [formData, setFormData] = useState({
@@ -16,11 +19,35 @@ export const Login = () => {
     password: '',
     rememberMe: false,
   });
+  const [error, setError] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
+  const navigate = useNavigate();
+  const { login } = useAuth();
 
-  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    // TODO: Implement login logic
-    console.log('Login attempt with:', formData);
+    setError('');
+    setIsLoading(true);
+
+    try {
+      const response = await authServices.login(formData);
+      if (response.success) {
+        if (response.data.requires2FA) {
+          // Redirect to 2FA page if required
+          navigate('/2fa');
+        } else {
+          // Direct login if 2FA not required
+          login(response.data.token);
+          navigate('/');
+        }
+      } else {
+        setError(response.message || 'An error occurred');
+      }
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'An error occurred');
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -37,6 +64,11 @@ export const Login = () => {
       subtitle="Welcome back! Please enter your credentials to continue."
     >
       <Box component="form" onSubmit={handleSubmit} sx={{ width: '100%' }}>
+        {error && (
+          <Alert severity="error" sx={{ mb: 2 }}>
+            {error}
+          </Alert>
+        )}
         <TextField
           margin="normal"
           required
@@ -77,15 +109,13 @@ export const Login = () => {
           fullWidth
           variant="contained"
           sx={{ mt: 3, mb: 2 }}
+          disabled={isLoading}
         >
-          Sign In
+          {isLoading ? 'Signing in...' : 'Sign In'}
         </Button>
-        <Box sx={{ display: 'flex', justifyContent: 'space-between', mt: 2 }}>
-          <Link href="#" variant="body2">
+        <Box sx={{ display: 'flex', justifyContent: 'flex-end', mt: 2 }}>
+          <Link href="/forgot-password" variant="body2">
             Forgot password?
-          </Link>
-          <Link href="/register" variant="body2">
-            {"Don't have an account? Sign Up"}
           </Link>
         </Box>
       </Box>

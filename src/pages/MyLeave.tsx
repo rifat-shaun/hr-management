@@ -1,16 +1,16 @@
 import { Box, Typography } from '@mui/material';
 
-const Dashboard = () => {
+const MyLeave = () => {
   return (
-    <Box>
+    <Box sx={{ p: 3 }}>
       <Typography variant="h4" component="h1" gutterBottom>
-        Dashboard
+        My Leave
       </Typography>
       <Typography variant="body1">
-        Welcome to your Vendor Management dashboard!
+        View and manage your leave requests.
       </Typography>
     </Box>
   );
 };
 
-export default Dashboard; 
+export default MyLeave; 

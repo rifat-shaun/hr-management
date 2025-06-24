@@ -1,16 +1,16 @@
 import { Box, Typography } from '@mui/material';
 
-const Dashboard = () => {
+const Documents = () => {
   return (
-    <Box>
+    <Box sx={{ p: 3 }}>
       <Typography variant="h4" component="h1" gutterBottom>
-        Dashboard
+        My Documents
       </Typography>
       <Typography variant="body1">
-        Welcome to your Vendor Management dashboard!
+        Access and manage your important documents.
       </Typography>
     </Box>
   );
 };
 
-export default Dashboard; 
+export default Documents; 

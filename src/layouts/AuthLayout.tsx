@@ -1,5 +1,6 @@
 import { Box, Container, Paper, Typography } from '@mui/material';
 import type { ReactNode } from 'react';
+import { ThemeToggle } from '../components/ThemeToggle';
 
 interface AuthLayoutProps {
   children: ReactNode;
@@ -14,9 +15,14 @@ export const AuthLayout = ({ children, title, subtitle }: AuthLayoutProps) => {
         minHeight: '100vh',
         display: 'flex',
         flexDirection: 'column',
-        backgroundColor: (theme) => theme.palette.grey[100],
+        backgroundColor: (theme) => theme.palette.background.default,
       }}
     >
+      {/* Theme Toggle */}
+      <Box sx={{ position: 'absolute', top: 16, right: 16 }}>
+        <ThemeToggle />
+      </Box>
+
       <Container component="main" maxWidth="sm" sx={{ mb: 4 }}>
         <Box
           sx={{
@@ -32,7 +38,7 @@ export const AuthLayout = ({ children, title, subtitle }: AuthLayoutProps) => {
             variant="h4"
             sx={{ mb: 1, color: (theme) => theme.palette.primary.main }}
           >
-            HR Management
+            Vendor Management
           </Typography>
 
           {/* Auth Card */}
@@ -46,6 +52,7 @@ export const AuthLayout = ({ children, title, subtitle }: AuthLayoutProps) => {
               display: 'flex',
               flexDirection: 'column',
               alignItems: 'center',
+              backgroundColor: (theme) => theme.palette.background.paper,
             }}
           >
             {title && (
@@ -74,7 +81,7 @@ export const AuthLayout = ({ children, title, subtitle }: AuthLayoutProps) => {
             align="center"
             sx={{ mt: 4 }}
           >
-            © {new Date().getFullYear()} HR Management. All rights reserved.
+            © {new Date().getFullYear()} Vendor Management. All rights reserved.
           </Typography>
         </Box>
       </Container>
