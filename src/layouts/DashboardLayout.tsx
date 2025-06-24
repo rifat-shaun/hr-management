@@ -157,7 +157,7 @@ const DashboardLayout: React.FC = () => {
         }}
       >
         <SidebarHeader>
-          <Logo isOpen={isSidebarOpen}>HR Manager</Logo>
+          <Logo isOpen={isSidebarOpen}>Vendor Manager</Logo>
           {isSidebarOpen ? (
             <CloseIcon onClick={toggleSidebar} sx={{ cursor: 'pointer' }} />
           ) : (

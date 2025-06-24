@@ -29,7 +29,7 @@ export class HttpClient implements IHttpClient {
       },
 
       validateStatus: (status: number) => status >= 200 && status < 300,
-      withCredentials: true,
+      withCredentials: false,
     });
   }
 

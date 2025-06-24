@@ -38,7 +38,7 @@ export const AuthLayout = ({ children, title, subtitle }: AuthLayoutProps) => {
             variant="h4"
             sx={{ mb: 1, color: (theme) => theme.palette.primary.main }}
           >
-            HR Management
+            Vendor Management
           </Typography>
 
           {/* Auth Card */}
@@ -81,7 +81,7 @@ export const AuthLayout = ({ children, title, subtitle }: AuthLayoutProps) => {
             align="center"
             sx={{ mt: 4 }}
           >
-            © {new Date().getFullYear()} HR Management. All rights reserved.
+            © {new Date().getFullYear()} Vendor Management. All rights reserved.
           </Typography>
         </Box>
       </Container>
